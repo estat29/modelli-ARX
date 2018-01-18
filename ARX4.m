@@ -42,11 +42,12 @@ for t=7:N
     u=y(t)-b'*z;
     Se=L*Se+abs(1-L)*(e*u);
     E(t,:)=[Se, e, u];
-    V(t,:)= diag(inv(R))'*Se/(1+L);
-    gr = [sum(b(4:5))/(1-sum(b(2:3)))^2  sum(b(4:5))/(1-sum(b(2:3)))^2 1/(1-sum(b(2:3))) 1/(1-sum(b(2:3)))]';
-    Vg5 = inv(R);
-    Vg4 = Vg5(2:5,2:5);
-    Vg(t) = gr'*(Vg4*Se/(1+L))*gr;
+    P=inv(R)*Se/(1+L);
+    V(t,:)= diag(P)';
+    nu=sum(b(4:5));
+    de=1-sum(b(2:3));
+    gr = [nu/de nu/de 1 1]'/de;
+    Vg(t) = gr'*(P(2:5,2:5))*gr;
 end 
 
 
