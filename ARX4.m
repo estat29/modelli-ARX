@@ -1,9 +1,9 @@
 
-function [Q, B, V, E] = ARX4( Y, L )
+function [Q, B, V, E, Vg] = ARX4( Y, L )
 
 N=length(Y); y=Y(:,2); x=Y(:,3); m=55;
 b=zeros(5,1); R=eye(5); Q=0; Se=1;
-B=zeros(N,5); V=B; E=B(:,1:3);
+B=zeros(N,5); V=B; E=B(:,1:3);Vg=ones(N,1);
 
 y0=y(1:m)-y(m)+y(1); %-----------------------
 x0=x(1:m)-x(m)+x(1); % Inizializzazione ...
@@ -43,6 +43,10 @@ for t=7:N
     Se=L*Se+abs(1-L)*(e*u);
     E(t,:)=[Se, e, u];
     V(t,:)= diag(inv(R))'*Se/(1+L);
+    gr = [sum(b(4:5))/(1-sum(b(2:3)))^2  sum(b(4:5))/(1-sum(b(2:3)))^2 1/(1-sum(b(2:3))) 1/(1-sum(b(2:3)))]';
+    Vg5 = inv(R);
+    Vg4 = Vg5(2:5,2:5);
+    Vg(t) = gr'*(Vg4*Se/(1+L))*gr;
 end 
 
 
